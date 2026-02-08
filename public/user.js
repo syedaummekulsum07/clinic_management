@@ -107,6 +107,9 @@ let qualificationList = [
   // } else {
   // 	$("#showSlotMenu").css("display", "block");
   // }
+    if(role=="ADMIN"){
+		$("#showAppointmentMenu").css("display","none")
+	}
 
   if (role === "ADMIN" || role === "PATIENT") {
     $("#showSlotMenu").css("display", "none");

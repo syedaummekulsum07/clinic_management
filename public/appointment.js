@@ -145,6 +145,10 @@ let patientList = [];
   let role = localStorage.getItem("role");
   $("#setRole").text(role);
 
+
+  if(role=="DOCTOR"){
+    $("#showSlotAdd").css("display", "none")
+  }
   if (role === "ADMIN" || role === "PATIENT") {
     $("#showSlotMenu").css("display", "none");
   } else {

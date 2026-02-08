@@ -9,13 +9,17 @@
 	// } else {
 	// 	$("#showSlotMenu").css("display", "block");
 	// }
-
+    
 	if (role === "ADMIN" || role === "PATIENT") {
 		$("#showSlotMenu").css("display", "none");
 	} else {
 		$("#showSlotMenu").css("display", "block");
 	}
 	showToastMessage("Welcome to HomePage", "info", true);
+
+	if(role=="ADMIN"){
+		$("#showAppointmentMenu").css("display","none")
+	}
 })();
 
 
