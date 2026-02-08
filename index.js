@@ -1,4 +1,5 @@
 const express = require("express");
+const connectDB = require('./database.js')
 const app = express();
 app.use(express.json());
 app.use(express.static("public"));
@@ -18,9 +19,11 @@ const AppointmentService = require("./src/service/appointment-service.js");
 const UserMiddleware = require("./src/middleware/user-middleware.js");
 const Utility = require("./src/utils/utility.js");
 require("dotenv").config();
-const port = process.env.PORT;
+const port = process.env.PORT || 3000;
 
-require("./database.js");
+app.get('/', (req, res) => {
+  res.json({ status: 'OK', message: 'Clinic Management API running' });
+});
 
 app.use("/dashboard", (req, res) => {
   res.sendFile(__dirname + "/public/dashboard.html");
@@ -138,7 +141,7 @@ app.get(
             medicines: result.prescription.medicine,
             investigations: result.prescription.investigations,
             followUpDate: dayjs(result.prescription.followUpDate).format(
-              "DD MMM YYYY"
+              "DD MMM YYYY",
             ),
             notes: result.prescription.notes || "N/A",
           };
@@ -222,7 +225,7 @@ app.get(
       console.error(err);
       res.status(500).send("Error generating PDF");
     }
-  }
+  },
 );
 app.get(
   "/download-bill/:id",
@@ -471,11 +474,11 @@ app.get(
             website: "www.serenityclinic.com",
 
             invoiceNo: `INV_${result.patientId.firstName}_${Utility.randomData(
-              6
+              6,
             )}`,
             invoiceDate: Utility.formatDate(new Date()),
             dueDate: Utility.formatDate(
-              new Date(result.prescription.followUpDate)
+              new Date(result.prescription.followUpDate),
             ),
             paymentMethod: "Cash/UPI",
 
@@ -525,7 +528,7 @@ app.get(
       console.error(err);
       res.status(500).send("Error generating PDF");
     }
-  }
+  },
 );
 
 app.use("/", (req, res) => {
@@ -552,8 +555,8 @@ UserService.register(adminPayload, undefined)
       CustomResponse.success(
         CONSTANT.HTTP_STATUS.CREATED,
         CONSTANT.USER.REGISTER,
-        result
-      )
+        result,
+      ),
     );
   })
   .catch((error) => {
@@ -561,11 +564,17 @@ UserService.register(adminPayload, undefined)
       CustomResponse.error(
         CONSTANT.HTTP_STATUS.INTERNAL_SERVER_ERROR,
         CONSTANT.COMMON.SERVER_ERROR,
-        error
-      )
+        error,
+      ),
     );
   });
 
-app.listen(port, () => {
-  console.log(`Server started`);
-});
+async function startServer() {
+  const dbConnected = await connectDB(); // Call imported function
+
+  app.listen(port, "0.0.0.0", () => {
+    console.log(`Server started`);
+  });
+};
+
+startServer();
